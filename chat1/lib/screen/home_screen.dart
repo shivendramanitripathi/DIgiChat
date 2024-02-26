@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:chat1/screen/setting_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+
 import '../commonwidget/loading_view.dart';
 import '../constants/firestore_constants.dart';
 import '../controller/auth_provider.dart';
@@ -88,9 +90,30 @@ class HomePageState extends State<HomePage> {
       }
       return;
     });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print('onMessageOpenedApp: $message');
+      final String peerId = message.data['peerId'];
+      final String peerAvatar = message.data['peerAvatar'];
+      final String peerNickname = message.data['peerNickname'];
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ChatScreen(
+            arguments: ChatPageArguments(
+              peerId: peerId,
+              peerAvatar: peerAvatar,
+              peerNickname: peerNickname,
+            ),
+          ),
+        ),
+      );
+
+    });
     _firebaseMessaging.getToken().then((token) {
       if (token != null) {
-        _homeProvider.updateDataFirestore(FirestoreConstants.pathUserCollection, _currentUserId, {'pushToken': token});
+        _homeProvider.updateDataFirestore(FirestoreConstants.pathUserCollection,
+            _currentUserId, {'pushToken': token});
       }
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());
@@ -98,7 +121,8 @@ class HomePageState extends State<HomePage> {
   }
 
   void _configLocalNotification() {
-    const initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    const initializationSettingsAndroid =
+    AndroidInitializationSettings('app_icon');
     const initializationSettingsIOS = DarwinInitializationSettings();
     const initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
@@ -108,7 +132,8 @@ class HomePageState extends State<HomePage> {
   }
 
   void _scrollListener() {
-    if (_listScrollController.offset >= _listScrollController.position.maxScrollExtent &&
+    if (_listScrollController.offset >=
+        _listScrollController.position.maxScrollExtent &&
         !_listScrollController.position.outOfRange) {
       setState(() {
         _limit += _limitIncrement;
@@ -122,7 +147,7 @@ class HomePageState extends State<HomePage> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) =>  const SettingsScreen()),
+        MaterialPageRoute(builder: (_) => const SettingsScreen()),
       );
     }
   }
@@ -167,7 +192,8 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode ? Colors.black45 : Colors.white,
       appBar: AppBar(
-        backgroundColor: themeProvider.isDarkMode ? Colors.black45 : Colors.white,
+        backgroundColor:
+        themeProvider.isDarkMode ? Colors.black45 : Colors.white,
         title: const Text(
           "Chat Room",
           style: TextStyle(color: ColorConstants.primaryColor),
@@ -217,7 +243,7 @@ class HomePageState extends State<HomePage> {
                           );
                         }
                       } else {
-                        return  const Center(
+                        return const Center(
                           child: CircularProgressIndicator(
                             color: ColorConstants.themeColor,
                           ),
@@ -249,7 +275,8 @@ class HomePageState extends State<HomePage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Icon(Icons.search, color: ColorConstants.primaryColor, size: 20),
+          const Icon(Icons.search,
+              color: ColorConstants.primaryColor, size: 20),
           const SizedBox(width: 5),
           Expanded(
             child: TextFormField(
@@ -274,9 +301,11 @@ class HomePageState extends State<HomePage> {
               },
               decoration: const InputDecoration.collapsed(
                 hintText: 'Search by nickname (type exactly case sensitive)',
-                hintStyle: TextStyle(fontSize: 13, color: ColorConstants.greyColor),
+                hintStyle:
+                TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
-              style: TextStyle(fontSize: 13, color: ColorConstants.primaryColor),
+              style:
+              const TextStyle(fontSize: 13, color: ColorConstants.primaryColor),
             ),
           ),
           StreamBuilder<bool>(
