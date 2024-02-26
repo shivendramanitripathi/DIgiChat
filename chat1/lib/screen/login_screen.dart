@@ -34,29 +34,33 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black87,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack( // Wrap your content in a Stack
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Image.asset(AppImages.back),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          GoogleLoginButton(
-            onPressed: () async {
-              bool isSuccess = await authProvider.handleSignIn();
-              if (isSuccess) {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const HomePage()));
-              }
-            },
-          ),
-          FacebookLoginButton(
-            onPressed: () async {
-              await authProvider.handleFacebookSignIn();
-            },
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Image.asset(AppImages.back),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              GoogleLoginButton(
+                onPressed: () async {
+                  bool isSuccess = await authProvider.handleSignIn();
+                  if (isSuccess) {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => const HomePage()));
+                  }
+                },
+              ),
+              FacebookLoginButton(
+                onPressed: () async {
+                  await authProvider.handleFacebookSignIn();
+                },
+              ),
+            ],
           ),
           Positioned(
             child: authProvider.status == Status.authenticating

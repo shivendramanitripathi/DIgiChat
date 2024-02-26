@@ -482,10 +482,6 @@ xml
 3.2
 file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0/
 file:///C:/Users/DELL/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0/lib/
-chat1
-3.3
-file:///C:/Users/DELL/StudioProjects/chat1/
-file:///C:/Users/DELL/StudioProjects/chat1/lib/
 sky_engine
 3.2
 file:///C:/developer/flutternew/flutter/bin/cache/pkg/sky_engine/
@@ -502,4 +498,8 @@ flutter_web_plugins
 3.2
 file:///C:/developer/flutternew/flutter/packages/flutter_web_plugins/
 file:///C:/developer/flutternew/flutter/packages/flutter_web_plugins/lib/
+chat1
+3.3
+file:///D:/Chat-APp/chat1/
+file:///D:/Chat-APp/chat1/lib/
 2

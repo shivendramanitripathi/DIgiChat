@@ -274,10 +274,9 @@ class HomePageState extends State<HomePage> {
               },
               decoration: const InputDecoration.collapsed(
                 hintText: 'Search by nickname (type exactly case sensitive)',
-                hintStyle:
-                TextStyle(fontSize: 13, color: ColorConstants.greyColor),
+                hintStyle: TextStyle(fontSize: 13, color: ColorConstants.greyColor),
               ),
-              style: const TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: 13, color: ColorConstants.primaryColor),
             ),
           ),
           StreamBuilder<bool>(
@@ -285,15 +284,16 @@ class HomePageState extends State<HomePage> {
             builder: (_, snapshot) {
               return snapshot.data == true
                   ? GestureDetector(
-                  onTap: () {
-                    _searchBarController.clear();
-                    _btnClearController.add(false);
-                    setState(() {
-                      _textSearch = "";
-                    });
-                  },
-                  child: const Icon(Icons.clear_rounded,
-                      color: ColorConstants.greyColor, size: 20))
+                onTap: () {
+                  _searchBarController.clear();
+                  _btnClearController.add(false);
+                  setState(() {
+                    _textSearch = "";
+                  });
+                },
+                child: const Icon(Icons.clear_rounded,
+                    color: ColorConstants.greyColor, size: 20),
+              )
                   : const SizedBox.shrink();
             },
           ),
