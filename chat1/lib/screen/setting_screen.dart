@@ -163,7 +163,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     });
                   },
                   child: Stack(
-                    alignment: Alignment.center,
+                    alignment: Alignment.bottomRight,
                     children: [
                       Container(
                         margin: const EdgeInsets.all(20),
@@ -199,11 +199,22 @@ class SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                       ),
-                      Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 30,
+                      Positioned(
+                        bottom: 29,
+                        right:15,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: ColorConstants.primaryColor,
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
                       ),
+
                     ],
                   ),
                 ),
