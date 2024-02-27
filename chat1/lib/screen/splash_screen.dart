@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../constants/app-images.dart';
 import '../controller/auth_provider.dart';
 import 'home_screen.dart';
-import 'login_screen.dart';
+import 'auth/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

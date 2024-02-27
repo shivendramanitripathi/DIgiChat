@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../commonwidget/loading_view.dart';
 import '../constants/app-images.dart';
-import '../constants/color_constants.dart';
 import '../constants/firestore_constants.dart';
 import '../constants/type_constant.dart';
 import '../controller/chat_provider.dart';
@@ -18,7 +17,7 @@ import '../controller/setting_provider.dart';
 import '../model/message_chat.dart';
 import '../utils/theme_notifer.dart';
 import 'full_photo.dart';
-import 'login_screen.dart';
+import 'auth/login_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.arguments});
@@ -86,14 +85,15 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _callPhoneNumber(String callPhoneNumber) async{
+  void _callPhoneNumber(String callPhoneNumber) async {
     var url = 'tel://$callPhoneNumber';
-    if(await canLaunch(url)){
+    if (await canLaunch(url)) {
       await launch(url);
-    }else{
+    } else {
       throw 'Error occurred';
     }
   }
+
   void _readLocal() {
     if (_authProvider.userFirebaseId?.isNotEmpty == true) {
       _currentUserId = _authProvider.userFirebaseId!;
@@ -272,7 +272,6 @@ class ChatScreenState extends State<ChatScreen> {
         ],
       );
     } else {
-      // Left (peer message)
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
         child: Column(
@@ -461,10 +460,11 @@ class ChatScreenState extends State<ChatScreen> {
               size: 30,
               color: ColorConstants.primaryColor,
             ),
-            onPressed: (){
+            onPressed: () {
               SettingProvider settingProvider;
               settingProvider = context.read<SettingProvider>();
-              String callPhoneNumber = settingProvider.getPref(FirestoreConstants.phoneNumber) ?? "";
+              String callPhoneNumber =
+                  settingProvider.getPref(FirestoreConstants.phoneNumber) ?? "";
               _callPhoneNumber(callPhoneNumber);
             },
           ),

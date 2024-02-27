@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/firestore_constants.dart';
 import '../model/user_chat.dart';
+import '../services/database_service.dart';
+import '../services/helper.dart';
 
 enum Status {
   uninitialized,
@@ -137,39 +138,37 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<User?> signUpWithEmailAndPassword(String email, String password) async {
-
+  // login
+  Future loginWithUserNameandPassword(String email, String password) async {
     try {
-      UserCredential credential =await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      return credential.user;
-    } on FirebaseAuthException catch (e) {
+      User user = (await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password))
+          .user!;
 
-      if (e.code == 'email-already-in-use') {
-        Fluttertoast.showToast(msg: 'The email address is already in use.');
-      } else {
-        Fluttertoast.showToast(msg: 'An error occurred: ${e.code}');
+      if (user != null) {
+        return true;
       }
+    } on FirebaseAuthException catch (e) {
+      return e.message;
     }
-    return null;
-
   }
 
-  Future<User?> signInWithEmailAndPassword(String email, String password) async {
-
+  // register
+  Future registerUserWithEmailandPassword(
+      String fullName, String email, String password) async {
     try {
-      UserCredential credential =await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      return credential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-        Fluttertoast.showToast(msg: 'Invalid email or password.');
+      User user = (await firebaseAuth.createUserWithEmailAndPassword(
+          email: email, password: password))
+          .user!;
 
-      } else {
-        Fluttertoast.showToast(msg: 'An error occurred: ${e.code}');
+      if (user != null) {
+        // call our database service to update the user data.
+        await DatabaseService(uid: user.uid).savingUserData(fullName, email);
+        return true;
       }
-
+    } on FirebaseAuthException catch (e) {
+      return e.message;
     }
-    return null;
-
   }
 
 
@@ -178,10 +177,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> handleSignOut() async {
-    _status = Status.uninitialized;
-    await firebaseAuth.signOut();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
+  Future handleSignOut() async {
+    try {
+      _status = Status.uninitialized;
+      await firebaseAuth.signOut();
+      await googleSignIn.disconnect();
+      await googleSignIn.signOut();
+      await HelperFunctions.saveUserLoggedInStatus(false);
+      await HelperFunctions.saveUserEmailSF("");
+      await HelperFunctions.saveUserNameSF("");
+      await firebaseAuth.signOut();
+    } catch (e) {
+      return null;
+    }
   }
 }
+

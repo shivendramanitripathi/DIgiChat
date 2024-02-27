@@ -40,6 +40,8 @@ class ChatProvider {
         .snapshots();
   }
 
+  void isDataResived() {}
+
   void sendMessage(String content, int type, String groupChatId,
       String currentUserId, String peerId) {
     final documentReference = firebaseFirestore
@@ -47,7 +49,6 @@ class ChatProvider {
         .doc(groupChatId)
         .collection(groupChatId)
         .doc(DateTime.now().millisecondsSinceEpoch.toString());
-
     final messageChat = MessageChat(
       idFrom: currentUserId,
       idTo: peerId,

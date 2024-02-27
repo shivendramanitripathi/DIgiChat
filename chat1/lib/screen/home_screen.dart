@@ -19,7 +19,7 @@ import '../utils/debounce.dart';
 import '../utils/theme_notifer.dart';
 import '../utils/utilies.dart';
 import 'chat_screen.dart';
-import 'login_screen.dart';
+import 'auth/login_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key});
@@ -114,6 +114,7 @@ class HomePageState extends State<HomePage> {
       if (token != null) {
         _homeProvider.updateDataFirestore(FirestoreConstants.pathUserCollection,
             _currentUserId, {'pushToken': token});
+
       }
     }).catchError((err) {
       Fluttertoast.showToast(msg: err.message.toString());

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ import '../model/user_chat.dart';
 import '../utils/theme_notifer.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   State createState() => SettingsScreenState();
@@ -59,12 +58,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   Future<bool> _pickAvatar() async {
     final imagePicker = ImagePicker();
-    final pickedXFile = await imagePicker
-        .pickImage(source: ImageSource.gallery)
-        .catchError((err) {
-      Fluttertoast.showToast(msg: err.toString());
-      return null;
-    });
+    final pickedXFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedXFile != null) {
       final imageFile = File(pickedXFile.path);
       setState(() {
@@ -90,8 +84,7 @@ class SettingsScreenState extends State<SettingsScreen> {
         aboutMe: _aboutMe,
       );
       _settingProvider
-          .updateDataFirestore(FirestoreConstants.pathUserCollection, _userId,
-              updateInfo.toJson())
+          .updateDataFirestore(FirestoreConstants.pathUserCollection, _userId, updateInfo.toJson())
           .then((_) async {
         await _settingProvider.setPref(FirestoreConstants.photoUrl, _avatarUrl);
         setState(() {
@@ -126,8 +119,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       aboutMe: _aboutMe,
     );
     _settingProvider
-        .updateDataFirestore(
-            FirestoreConstants.pathUserCollection, _userId, updateInfo.toJson())
+        .updateDataFirestore(FirestoreConstants.pathUserCollection, _userId, updateInfo.toJson())
         .then((_) async {
       await _settingProvider.setPref(FirestoreConstants.nickname, _nickname);
       await _settingProvider.setPref(FirestoreConstants.aboutMe, _aboutMe);
@@ -170,74 +162,56 @@ class SettingsScreenState extends State<SettingsScreen> {
                       if (isSuccess) _uploadFile();
                     });
                   },
-                  child: Container(
-                    margin: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(45),
-                    ),
-                    child: _avatarFile == null
-                        ? _avatarUrl.isNotEmpty
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(45),
+                        ),
+                        child: _avatarFile == null
+                            ? _avatarUrl.isNotEmpty
                             ? ClipRRect(
-                                borderRadius: BorderRadius.circular(43),
-                                child: Image.network(
-                                  _avatarUrl,
-                                  fit: BoxFit.cover,
-                                  width: 90,
-                                  height: 90,
-                                  errorBuilder: (_, __, ___) {
-                                    return const Icon(
-                                      Icons.account_circle,
-                                      size: 90,
-                                      color: ColorConstants.greyColor,
-                                    );
-                                  },
-                                  loadingBuilder: (_, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return SizedBox(
-                                      width: 90,
-                                      height: 90,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            : Container(
-                                width: 120,
-                                height: 120,
-                                color: ColorConstants.greyColor,
-                                child: const Icon(
-                                  Icons.account_circle,
-                                  size: 90,
-                                ),
-                              )
-                        : ClipOval(
-                            child: Image.file(
-                              _avatarFile!,
-                              width: 90,
-                              height: 90,
-                              fit: BoxFit.cover,
-                            ),
+                          borderRadius: BorderRadius.circular(43),
+                          child: Image.network(
+                            _avatarUrl,
+                            fit: BoxFit.cover,
+                            width: 90,
+                            height: 90,
                           ),
+                        )
+                            : Container(
+                          width: 120,
+                          height: 120,
+                          color: ColorConstants.greyColor,
+                          child: const Icon(
+                            Icons.account_circle,
+                            size: 90,
+                          ),
+                        )
+                            : ClipOval(
+                          child: Image.file(
+                            _avatarFile!,
+                            width: 90,
+                            height: 90,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ],
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Username
                     Container(
-                      margin:
-                          const EdgeInsets.only(left: 10, bottom: 5, top: 10),
+                      margin: const EdgeInsets.only(left: 10, bottom: 5, top: 10),
                       child: const Text(
                         'Nickname',
                         style: TextStyle(
@@ -256,8 +230,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                           decoration: const InputDecoration(
                             hintText: 'Sweetie',
                             contentPadding: EdgeInsets.all(5),
-                            hintStyle:
-                                TextStyle(color: ColorConstants.greyColor),
+                            hintStyle: TextStyle(color: ColorConstants.greyColor),
                           ),
                           controller: _controllerNickname,
                           onChanged: (value) {
@@ -267,11 +240,8 @@ class SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                     ),
-
-                    // About me
                     Container(
-                      margin:
-                          const EdgeInsets.only(left: 10, top: 30, bottom: 5),
+                      margin: const EdgeInsets.only(left: 10, top: 30, bottom: 5),
                       child: const Text(
                         'About me',
                         style: TextStyle(
@@ -290,8 +260,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                           decoration: const InputDecoration(
                             hintText: 'Fun, like travel and play PES...',
                             contentPadding: EdgeInsets.all(5),
-                            hintStyle:
-                                TextStyle(color: ColorConstants.greyColor),
+                            hintStyle: TextStyle(color: ColorConstants.greyColor),
                           ),
                           controller: _controllerAboutMe,
                           onChanged: (value) {
@@ -303,8 +272,6 @@ class SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ],
                 ),
-
-                // Button
                 Container(
                   margin: const EdgeInsets.only(top: 50, bottom: 50),
                   child: TextButton(
@@ -325,11 +292,9 @@ class SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-
-          // Loading
           Positioned(
-              child:
-                  _isLoading ? const LoadingView() : const SizedBox.shrink()),
+            child: _isLoading ? const LoadingView() : const SizedBox.shrink(),
+          ),
         ],
       ),
     );
